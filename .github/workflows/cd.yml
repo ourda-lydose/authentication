@@ -39,7 +39,7 @@ jobs:
 
       - name: Deploy
         run: |
-          gcloud run deploy subscription \
+          gcloud run deploy authentication \
           --region europe-west1 \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/authentication \
           --platform managed \
