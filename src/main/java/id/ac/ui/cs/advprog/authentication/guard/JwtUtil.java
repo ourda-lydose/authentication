@@ -1,4 +1,4 @@
-package id.ac.ui.cs.advprog.authentication.util;
+package id.ac.ui.cs.advprog.authentication.guard;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -19,7 +19,7 @@ public class JwtUtil {
 
     public static String extractEntityType(String token){
         final Claims claims=extractAllClaims(token);
-        return (String) claims.get(AppConstants.ENTITY_TYPE);
+        return (String) claims.get(JwtConstants.ENTITY_TYPE);
     }
 
     public static Date extractExpiration(String token) {
@@ -33,7 +33,7 @@ public class JwtUtil {
 
     private static Claims extractAllClaims(String token) {
 
-        Claims parsedClaims = Jwts.parser().setSigningKey(AppConstants.SECRET_KEY).parseClaimsJws(token).getBody();
+        Claims parsedClaims = Jwts.parser().setSigningKey(JwtConstants.SECRET_KEY).parseClaimsJws(token).getBody();
         return parsedClaims;
     }
 
@@ -43,18 +43,18 @@ public class JwtUtil {
 
     public static String generateToken(String username, String entityType) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(AppConstants.ENTITY_TYPE,entityType);
+        claims.put(JwtConstants.ENTITY_TYPE,entityType);
         return createToken(claims, username);
     }
 
     private static String createToken(Map<String, Object> claims, String subject) {
         Date issueDate = new Date(System.currentTimeMillis());
 
-        Date expirationDate = new Date(System.currentTimeMillis() + AppConstants.EXPIRATION_TIME
+        Date expirationDate = new Date(System.currentTimeMillis() + JwtConstants.EXPIRATION_TIME
         );
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(issueDate)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS256, AppConstants.SECRET_KEY).compact()
+                .signWith(SignatureAlgorithm.HS256, JwtConstants.SECRET_KEY).compact()
                 ;
     }
 
