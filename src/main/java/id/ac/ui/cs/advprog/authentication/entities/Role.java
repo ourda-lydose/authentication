@@ -1,4 +1,4 @@
-package id.ac.ui.cs.advprog.authentication.model;
+package id.ac.ui.cs.advprog.authentication.entities;
 
 import jakarta.persistence.*;
 
