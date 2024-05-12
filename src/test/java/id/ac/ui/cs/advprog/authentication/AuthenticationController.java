@@ -1,9 +1,9 @@
-package id.ac.ui.cs.advprog.authentication.controllers;
+package id.ac.ui.cs.advprog.authentication;
 
-import id.ac.ui.cs.advprog.authentication.entities.ERole;
-import id.ac.ui.cs.advprog.authentication.entities.User;
 import id.ac.ui.cs.advprog.authentication.dto.LoginUserDto;
 import id.ac.ui.cs.advprog.authentication.dto.RegisterUserDto;
+import id.ac.ui.cs.advprog.authentication.entities.ERole;
+import id.ac.ui.cs.advprog.authentication.entities.User;
 import id.ac.ui.cs.advprog.authentication.responses.LoginResponse;
 import id.ac.ui.cs.advprog.authentication.services.AuthenticationService;
 import id.ac.ui.cs.advprog.authentication.services.JwtService;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/auth")
@@ -36,8 +35,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
-        UserDetails userDetails = (UserDetails) authenticatedUser;
-        String jwtToken = jwtService.generateToken(userDetails);
+        String jwtToken = jwtService.generateToken((UserDetails) authenticatedUser);
         LoginResponse loginResponse = new LoginResponse().setToken(jwtToken).setExpiresIn(jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
     }

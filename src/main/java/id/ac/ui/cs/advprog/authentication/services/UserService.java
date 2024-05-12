@@ -17,9 +17,11 @@ public class UserService {
 
     public List<User> allUsers() {
         List<User> users = new ArrayList<>();
-
         userRepository.findAll().forEach(users::add);
-
         return users;
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
