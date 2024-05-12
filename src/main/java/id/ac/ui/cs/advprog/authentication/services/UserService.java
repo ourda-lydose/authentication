@@ -2,9 +2,10 @@ package id.ac.ui.cs.advprog.authentication.services;
 
 import id.ac.ui.cs.advprog.authentication.entities.User;
 import id.ac.ui.cs.advprog.authentication.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,10 +16,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public Page<User> findAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
     public List<User> allUsers() {
-        List<User> users = new ArrayList<>();
-        userRepository.findAll().forEach(users::add);
-        return users;
+        return userRepository.findAll();
     }
 
     public User findByEmail(String email) {
