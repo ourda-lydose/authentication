@@ -32,6 +32,9 @@ public class AuthenticationApplication {
     @Value(value = "${review.service.url}")
     private String REVIEW_SERVICE_URL;
 
+    @Value(value = "${subscriptionbox.service.url}")
+    private String SUBSCRIPTIONBOX_SERVICE_URL;
+
     @Value(value = "${subscription.service.url}")
     private String SUBSCRIPTION_SERVICE_URL;
 
@@ -166,6 +169,149 @@ public class AuthenticationApplication {
     }
 
     @Bean
+    public RouterFunction<ServerResponse> createItemRoute() {
+        return route("item")
+                .POST(API_PREFIX + "item" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getAllItemsRoute() {
+        return route("item")
+                .GET(API_PREFIX + "item" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getItemByIdRoute() {
+        return route("item")
+                .GET(API_PREFIX + "item/{itemId}" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> updateItemRoute() {
+        return route("item")
+                .PUT(API_PREFIX + "item/{itemId}" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> deleteItemRoute() {
+        return route("item")
+                .DELETE(API_PREFIX + "item/{itemId}" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> createBoxRoute() {
+        return route("box")
+                .POST(API_PREFIX + "box" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getAllBoxesRoute() {
+        return route("box")
+                .GET(API_PREFIX + "box" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getBoxByIdRoute() {
+        return route("box")
+                .GET(API_PREFIX + "box/{boxId}" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getItemsInBoxRoute() {
+        return route("box")
+                .GET(API_PREFIX + "box/{boxId}/items" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> updateBoxRoute() {
+        return route("box")
+                .PUT(API_PREFIX + "box/{boxId}" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> deleteBoxRoute() {
+        return route("box")
+                .DELETE(API_PREFIX + "box/{boxId}" + WILDCARD, request -> {
+                    if (isAdmin()) {
+                        return http(SUBSCRIPTIONBOX_SERVICE_URL).handle(request);
+                    } else {
+                        return ServerResponse.status(HttpStatus.FORBIDDEN).body("Forbidden: You do not have permission to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
     public RouterFunction<ServerResponse> getSubscriptionsRoute() {
         return route("subscription")
                 .GET(API_PREFIX + "subscription/" + WILDCARD, http(SUBSCRIPTION_SERVICE_URL))
@@ -247,9 +393,9 @@ public class AuthenticationApplication {
 
                     if (userId != null) {
                         ServerRequest updatedRequest;
-                            updatedRequest = ServerRequest.from(request)
-                                    .headers(headers -> headers.set("X-userid", String.valueOf(userId)))
-                                    .build();
+                        updatedRequest = ServerRequest.from(request)
+                                .headers(headers -> headers.set("X-userid", String.valueOf(userId)))
+                                .build();
                         return http(SUBSCRIPTION_SERVICE_URL).handle(updatedRequest);
                     } else {
                         return ServerResponse.status(HttpStatus.UNAUTHORIZED)
@@ -304,4 +450,6 @@ public class AuthenticationApplication {
                 })
                 .build();
     }
+
+
 }
