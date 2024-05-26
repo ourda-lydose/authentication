@@ -32,6 +32,9 @@ public class AuthenticationApplication {
     @Value(value = "${review.service.url}")
     private String REVIEW_SERVICE_URL;
 
+    @Value(value = "${subscription.service.url}")
+    private String SUBSCRIPTION_SERVICE_URL;
+
     static final String API_PREFIX = "/api/";
     static final String WILDCARD = "**";
 
@@ -80,8 +83,8 @@ public class AuthenticationApplication {
     @Bean
     public RouterFunction<ServerResponse> createReviewRoute() {
         return route()
-            .POST(API_PREFIX + "reviews/" + WILDCARD, http(REVIEW_SERVICE_URL))
-            .build();
+                .POST(API_PREFIX + "reviews/" + WILDCARD, http(REVIEW_SERVICE_URL))
+                .build();
     }
 
     @Bean
@@ -162,5 +165,143 @@ public class AuthenticationApplication {
                 .build();
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> getSubscriptionsRoute() {
+        return route("subscription")
+                .GET(API_PREFIX + "subscription/" + WILDCARD, http(SUBSCRIPTION_SERVICE_URL))
+                .build();
+    }
 
+
+    @Bean
+    public RouterFunction<ServerResponse> getSubscriptionByIdRoute() {
+        return route("subscription")
+                .GET(API_PREFIX + "subscription/{subscription_id}" + WILDCARD, http(SUBSCRIPTION_SERVICE_URL))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> createSubscriptionRoute() {
+        return route()
+                .POST(API_PREFIX + "subscription/" + WILDCARD, http(SUBSCRIPTION_SERVICE_URL))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> updateSubscriptionRoute() {
+        return route()
+                .PUT(API_PREFIX + "subscription/{subscription_id}" + WILDCARD, request -> {
+                    Integer userId = getAuthenticatedUserId();
+
+                    if (userId != null) {
+                        ServerRequest updatedRequest;
+                        if (isAdmin()) {
+                            updatedRequest = ServerRequest.from(request)
+                                    .headers(headers -> headers.set("X-userid", "-1"))
+                                    .build();
+                        } else {
+                            updatedRequest = ServerRequest.from(request)
+                                    .headers(headers -> headers.set("X-userid", String.valueOf(userId)))
+                                    .build();
+                        }
+                        return http(SUBSCRIPTION_SERVICE_URL).handle(updatedRequest);
+                    } else {
+                        return ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                                .body("Unauthorized: Authentication required to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> deleteSubscriptionRoute() {
+        return route()
+                .DELETE(API_PREFIX + "subscription/{subscription_id}", request -> {
+                    Integer userId = getAuthenticatedUserId();
+
+                    if (userId != null) {
+                        ServerRequest updatedRequest;
+                        if (isAdmin()) {
+                            updatedRequest = ServerRequest.from(request)
+                                    .headers(headers -> headers.set("X-userid", "-1"))
+                                    .build();
+                        } else {
+                            updatedRequest = ServerRequest.from(request)
+                                    .headers(headers -> headers.set("X-userid", String.valueOf(userId)))
+                                    .build();
+                        }
+                        return http(SUBSCRIPTION_SERVICE_URL).handle(updatedRequest);
+                    } else {
+                        return ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                                .body("Unauthorized: Authentication required to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> cancelSubscriptionRoute() {
+        return route()
+                .PUT(API_PREFIX + "/subscription/cancel-subscription/{subscription_id}" + WILDCARD, request -> {
+                    Integer userId = getAuthenticatedUserId();
+
+                    if (userId != null) {
+                        ServerRequest updatedRequest;
+                            updatedRequest = ServerRequest.from(request)
+                                    .headers(headers -> headers.set("X-userid", String.valueOf(userId)))
+                                    .build();
+                        return http(SUBSCRIPTION_SERVICE_URL).handle(updatedRequest);
+                    } else {
+                        return ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                                .body("Unauthorized: Authentication required to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> subscriptionHistoryRoute() {
+        return route()
+                .GET(API_PREFIX + "/subscription/subscription-history" + WILDCARD, request -> {
+                    Integer userId = getAuthenticatedUserId();
+
+                    if (userId != null) {
+                        ServerRequest updatedRequest;
+                        updatedRequest = ServerRequest.from(request)
+                                .headers(headers -> headers.set("X-userid", String.valueOf(userId)))
+                                .build();
+                        return http(SUBSCRIPTION_SERVICE_URL).handle(updatedRequest);
+                    } else {
+                        return ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                                .body("Unauthorized: Authentication required to access this resource.");
+                    }
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getSubscriptionByStatusRoute() {
+        return route()
+                .DELETE(API_PREFIX + "subscription/subscriptions/{subscription_status}", request -> {
+                    Integer userId = getAuthenticatedUserId();
+
+                    if (userId != null) {
+                        ServerRequest updatedRequest;
+                        if (isAdmin()) {
+                            updatedRequest = ServerRequest.from(request)
+                                    .headers(headers -> headers.set("X-userid", "-1"))
+                                    .build();
+                        } else {
+                            updatedRequest = ServerRequest.from(request)
+                                    .headers(headers -> headers.set("X-userid", String.valueOf(userId)))
+                                    .build();
+                        }
+                        return http(SUBSCRIPTION_SERVICE_URL).handle(updatedRequest);
+                    } else {
+                        return ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                                .body("Unauthorized: Authentication required to access this resource.");
+                    }
+                })
+                .build();
+    }
 }
