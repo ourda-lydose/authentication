@@ -43,10 +43,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=ourda-lydose_profile
+            -Dsonar.projectKey=ourda-lydose_authentication
             -Dsonar.organization=ourda-lydose123
             -Dsonar.java.binaries=build/classes
             -Dsonar.sources=src/main/java
             -Dsonar.tests=src/test/java
-            -Dsonar.junit.reportPaths=build/test-results/test
-            -Dsonar.jacoco.reportPaths=build/jacoco/test.exec
